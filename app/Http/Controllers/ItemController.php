@@ -32,7 +32,7 @@ class ItemController extends Controller
             'id' => $uuid,
             'title' => $request->input('title'),
             'body' => $request->input('body'),
-            'user_id' => $request->input('userId'),
+            'user_id' => $request->input('user_id'),
         ]);
 
         return response()->json([

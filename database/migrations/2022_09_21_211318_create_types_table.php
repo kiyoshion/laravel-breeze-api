@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('materials', function (Blueprint $table) {
+        Schema::create('types', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('title');
+            $table->string('lang')->default('ja');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('materials');
+        Schema::dropIfExists('types');
     }
 };

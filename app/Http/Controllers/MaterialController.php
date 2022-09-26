@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Material;
 
 class MaterialController extends Controller
 {
@@ -13,7 +14,9 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'materials' => Material::with('user:id,name')->orderBy('created_at', 'desc')->take(10)->get()
+        ]);
     }
 
     /**
@@ -34,7 +37,17 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $uuid = uniqid();
+        $material = Material::firstOrCreate([
+            'id' => $uuid,
+            'title' => $request->input('title'),
+            'user_id' => $request->input('user_id'),
+        ]);
+
+        return response()->json([
+            'material' => $material
+        ], 201);
+
     }
 
     /**
@@ -45,7 +58,9 @@ class MaterialController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json([
+            'material' => Material::with('user:id,name')->findOrFail($id)
+        ], 200);
     }
 
     /**

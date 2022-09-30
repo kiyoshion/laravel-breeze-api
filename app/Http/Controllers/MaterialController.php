@@ -48,28 +48,38 @@ class MaterialController extends Controller
         if ($request->input('sections')) {
             $sections = $request->input('sections');
             $i = 0;
+            $parent_id = '';
             foreach($sections as $sec) {
                 $uuid = uniqid();
-                $parent_id = 0;
                 $order = $i;
-                $level = 1;
-                if (!$sec[$i]['parent_id'] == 0) {
-                    $parent_id = $material->id;
-                    $level = 2;
+                if ($sec['level'] === 1) {
+                    $section = Section::firstOrCreate([
+                        'id' => $uuid,
+                        'title' => $sec['title'],
+                        'level' => 1,
+                        'order' => $order,
+                        'parent_id' => $parent_id,
+                        'material_id' => $material->id,
+                    ]);
+                    $section->parent_id = $parent_id;
+                    $section->save();
+                } else {
+                    $section = Section::firstOrCreate([
+                        'id' => $uuid,
+                        'title' => $sec['title'],
+                        'level' => 0,
+                        'order' => $order,
+                        'parent_id' => NULL,
+                        'material_id' => $material->id,
+                    ]);
+                    $parent_id = $section->id;
                 }
-                $section = Section::firstOrCreate([
-                    'id' => $uuid,
-                    'title' => $sec[$i]['title'],
-                    'level' => $level,
-                    'order' => $order,
-                    'parent_id' => $parent_id,
-                ]);
                 $i++;
             }
         }
 
         return response()->json([
-            'material' => $material
+            'material' => Material::findOrFail($material->id)->with('sections')
         ], 201);
 
     }
@@ -83,7 +93,7 @@ class MaterialController extends Controller
     public function show($id)
     {
         return response()->json([
-            'material' => Material::with('user:id,name')->findOrFail($id)
+            'material' => Material::with(['user:id,name', 'sections'])->findOrFail($id)
         ], 200);
     }
 

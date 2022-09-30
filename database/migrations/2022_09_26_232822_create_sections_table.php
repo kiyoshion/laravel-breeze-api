@@ -19,8 +19,8 @@ return new class extends Migration
             $table->tinyInteger('order');
             $table->tinyInteger('level');
             $table->string('lang')->default('ja');
-            $table->integer('parent_id')->nullable();
-            $table->foreignId('material_id')->constrained('materials');
+            $table->string('parent_id')->nullable();
+            $table->foreignUuid('material_id')->constrained();
             $table->timestamps();
         });
     }

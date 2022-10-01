@@ -27,4 +27,9 @@ class Section extends Model
     {
         return $this->belongsTo(Material::class);
     }
+
+    public function outputs()
+    {
+        return $this->hasMany(Output::class);
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Material extends Model
+class Output extends Model
 {
     use HasFactory;
 
@@ -17,8 +17,9 @@ class Material extends Model
 
     protected $fillable = [
         'id',
-        'title',
-        'type_id',
+        'body',
+        'material_id',
+        'section_id',
         'user_id'
     ];
 
@@ -27,18 +28,13 @@ class Material extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function type()
+    public function material()
     {
-        return $this->belongsTo(Type::class);
+        return $this->belongsTo(Material::class);
     }
 
-    public function sections()
+    public function section()
     {
-        return $this->hasMany(Section::class);
-    }
-
-    public function outputs()
-    {
-        return $this->hasMany(Output::class);
+        return $this->belongsTo(Section::class);
     }
 }

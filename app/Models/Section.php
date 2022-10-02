@@ -23,6 +23,10 @@ class Section extends Model
         'material_id'
     ];
 
+    protected $appends = [
+        'outputCount'
+    ];
+
     public function material()
     {
         return $this->belongsTo(Material::class);
@@ -31,5 +35,10 @@ class Section extends Model
     public function outputs()
     {
         return $this->hasMany(Output::class);
+    }
+
+    public function getOutputCountAttribute()
+    {
+        return $this->outputs->count();
     }
 }

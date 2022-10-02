@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Section;
 
 class SectionController extends Controller
 {
@@ -45,7 +46,9 @@ class SectionController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json([
+            'section' => Section::with(['outputs', 'material'])->findOrFail($id)
+        ], 200);
     }
 
     /**

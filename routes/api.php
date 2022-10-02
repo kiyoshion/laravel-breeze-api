@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\OutputController;
+use App\Http\Controllers\SectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,5 @@ Route::apiResources([
     'items' => ItemController::class,
     'materials' => MaterialController::class,
     'outputs' => OutputController::class,
+    'sections' => SectionController::class,
 ]);

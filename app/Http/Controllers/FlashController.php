@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Section;
+use App\Models\Flash;
 
-class SectionController extends Controller
+class FlashController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +35,21 @@ class SectionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $uuid = uniqid();
+        $flash = Flash::firstOrCreate([
+            'id' => $uuid,
+            'front_title' => $request->input('front_title'),
+            'front_description' => $request->input('front_description'),
+            'back_title' => $request->input('back_title'),
+            'back_description' => $request->input('back_description'),
+            'material_id' => $request->input('material_id'),
+            'section_id' => $request->input('section_id'),
+            'user_id' => $request->input('user_id'),
+        ]);
+
+        return response()->json([
+            'flash' => $flash
+        ], 201);
     }
 
     /**
@@ -46,9 +60,7 @@ class SectionController extends Controller
      */
     public function show($id)
     {
-        return response()->json([
-            'section' => Section::with(['outputs', 'flashes', 'material'])->findOrFail($id)
-        ], 200);
+        //
     }
 
     /**

@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Output::class);
     }
+
+    public function flashes()
+    {
+        return $this->hasMany(Flash::class);
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Section extends Model
+class Flash extends Model
 {
     use HasFactory;
 
@@ -17,14 +17,13 @@ class Section extends Model
 
     protected $fillable = [
         'id',
-        'title',
-        'order',
-        'level',
-        'material_id'
-    ];
-
-    protected $appends = [
-        'outputCount'
+        'front_title',
+        'front_description',
+        'back_title',
+        'back_description',
+        'material_id',
+        'section_id',
+        'user_id'
     ];
 
     public function material()
@@ -32,18 +31,13 @@ class Section extends Model
         return $this->belongsTo(Material::class);
     }
 
-    public function outputs()
+    public function section()
     {
-        return $this->hasMany(Output::class);
+        return $this->belongsTo(Section::class);
     }
 
-    public function getOutputCountAttribute()
+    public function user()
     {
-        return $this->outputs->count();
-    }
-
-    public function flashes()
-    {
-        return $this->hasMany(Flash::class);
+        return $this->belongsTo(User::class);
     }
 }

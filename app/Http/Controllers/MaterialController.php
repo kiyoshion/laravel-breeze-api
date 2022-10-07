@@ -79,7 +79,7 @@ class MaterialController extends Controller
         }
 
         return response()->json([
-            'material' => Material::findOrFail($material->id)->with('sections')
+            'material' => Material::findOrFail($material->id)->with(['sections', 'users:id,name'])
         ], 201);
 
     }

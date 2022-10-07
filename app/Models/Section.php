@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Section extends Model
 {
@@ -24,7 +25,9 @@ class Section extends Model
     ];
 
     protected $appends = [
-        'outputCount'
+        'outputCount',
+        'flashCount',
+        'parentSection',
     ];
 
     public function material()
@@ -45,5 +48,17 @@ class Section extends Model
     public function flashes()
     {
         return $this->hasMany(Flash::class);
+    }
+
+    public function getFlashCountAttribute()
+    {
+        return $this->flashes->count();
+    }
+
+    public function getParentSectionAttribute()
+    {
+        $parentSection = DB::table('sections')->where('id', '=', $this->parent_id)->first();
+
+        return $parentSection;
     }
 }

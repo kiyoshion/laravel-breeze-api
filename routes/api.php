@@ -7,6 +7,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\OutputController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\RoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +30,5 @@ Route::apiResources([
     'materials' => MaterialController::class,
     'outputs' => OutputController::class,
     'sections' => SectionController::class,
+    'rooms' => RoomController::class,
 ]);

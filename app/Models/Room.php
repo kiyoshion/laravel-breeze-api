@@ -4,12 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Room extends Model
 {
     use HasFactory;
-    use HashUuids;
 
     protected $primaryKey = 'id';
 
@@ -21,6 +19,7 @@ class Room extends Model
         'id',
         'title',
         'description',
+        'user_id',
     ];
 
     public function user()
@@ -30,7 +29,7 @@ class Room extends Model
 
     public function materials()
     {
-        return $this->hasMany(Material::class);
+        return $this->belongsToMany(Material::class);
     }
 
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Material;
 use App\Models\Section;
 
@@ -39,14 +41,33 @@ class MaterialController extends Controller
     public function store(Request $request)
     {
         $uuid = uniqid();
-        $material = Material::firstOrCreate([
-            'id' => $uuid,
-            'title' => $request->input('title'),
-            'user_id' => $request->input('user_id'),
-        ]);
+        $file_result_path = '';
+        $file_name = date('YmdHis') . $uuid . '.jpg';
+        $file_path = 'img/materials/';
+
+        if ($request->file('poster')) {
+
+            // $poster = \Image::make($request->file('poster')->getRealPath())->resizeCanvas(90, 165, 'center');
+            $poster = \Image::make($request->file('poster')->getRealPath())->fit(360, 480);
+
+            Storage::disk('public')->put($file_path . $file_name, (string) $poster->encode('jpg', 80));
+
+            $thumbnail = \Image::make($request->file('poster')->getRealPath())->fit(90, 120);
+
+            Storage::disk('public')->put($file_path . 'thumb-' . $file_name, (string) $thumbnail->encode('jpg', 80));
+
+        }
+
+        $material = new Material();
+        $material->id = $uuid;
+        $material->poster = $file_path . $file_name;
+        $material->thumbnail = $file_path . 'thumb-' . $file_name;
+        $material->title = $request->input('title');
+        $material->user_id = $request->input('user_id');
+        $material->save();
 
         if ($request->input('sections')) {
-            $sections = $request->input('sections');
+            $sections = json_decode($request->input('sections'), true);
             $i = 0;
             $parent_id = '';
             foreach($sections as $sec) {

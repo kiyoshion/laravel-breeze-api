@@ -30,10 +30,8 @@ Then migrate:
 php artisan migrate
 ```
 
-## Clone laravel/breeze-next repository
+## intervention/image
 
-This repository is maintained by laravel team idk.
-
-[https://github.com/laravel/breeze-next](https://github.com/laravel/breeze-next "https://github.com/laravel/breeze-next")
-
-## Read its README
+```
+php artisan storage:link
+```

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Material extends Model
 {
@@ -20,6 +21,10 @@ class Material extends Model
         'title',
         'type_id',
         'user_id'
+    ];
+
+    protected $appends = [
+        'fullPathPoster'
     ];
 
     public function user()
@@ -50,5 +55,10 @@ class Material extends Model
     public function rooms()
     {
         return $this->belongsToMany(Room::class);
+    }
+
+    public function getFullPathPosterAttribute()
+    {
+        return Storage::url($this->poster);
     }
 }

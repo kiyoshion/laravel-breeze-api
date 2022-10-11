@@ -67,7 +67,7 @@ class RoomController extends Controller
     public function show($id)
     {
         return response()->json([
-            'room' => Room::with(['materials'])->findOrFail($id)
+            'room' => Room::with(['materials', 'materials.sections'])->findOrFail($id)
         ], 200);
     }
 

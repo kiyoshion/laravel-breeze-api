@@ -15,11 +15,24 @@ class MaterialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->query('key')) {
+            $key = $request->query('key') . '%';
+            $materials = Material::where('title', 'LIKE', $key)
+                ->with('user:id,name')
+                ->limit(12)
+                ->orderBy('title')
+                ->get();
+        } else {
+            $materials = Material::with('user:id,name')
+                ->orderBy('created_at', 'desc')
+                ->take(12)
+                ->get();
+        }
         return response()->json([
-            'materials' => Material::with('user:id,name')->orderBy('created_at', 'desc')->take(10)->get()
-        ]);
+            'materials' => $materials
+        ], 200);
     }
 
     /**
@@ -47,7 +60,6 @@ class MaterialController extends Controller
 
         if ($request->file('poster')) {
 
-            // $poster = \Image::make($request->file('poster')->getRealPath())->resizeCanvas(90, 165, 'center');
             $poster = \Image::make($request->file('poster')->getRealPath())->fit(360, 480);
 
             Storage::disk('public')->put($file_path . $file_name, (string) $poster->encode('jpg', 80));

@@ -24,7 +24,9 @@ class Material extends Model
     ];
 
     protected $appends = [
-        'fullPathPoster'
+        'fullPathPoster',
+        'parentSectionCount',
+        'childrenSectionCount',
     ];
 
     public function user()
@@ -60,5 +62,15 @@ class Material extends Model
     public function getFullPathPosterAttribute()
     {
         return Storage::url($this->poster);
+    }
+
+    public function getParentSectionCountAttribute()
+    {
+        return $this->sections->where('level', '=', 0)->count();
+    }
+
+    public function getChildrenSectionCountAttribute()
+    {
+        return $this->sections->where('level', '=', 1)->count();
     }
 }

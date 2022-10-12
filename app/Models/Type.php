@@ -9,24 +9,13 @@ class Type extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
     protected $fillable = [
-        'id',
-        'title',
+        'name',
         'lang',
-        'user_id',
-        'material_id'
+        'parent_id',
+        'label_parent',
+        'label_child',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function materials()
     {

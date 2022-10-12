@@ -105,6 +105,8 @@ class MaterialController extends Controller
                         'parent_id' => NULL,
                         'material_id' => $material->id,
                     ]);
+                    $section->parent_id = $section->id;
+                    $section->save();
                     $parent_id = $section->id;
                 }
                 $i++;

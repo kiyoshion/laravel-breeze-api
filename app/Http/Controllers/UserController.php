@@ -77,22 +77,23 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
 
-        if ($request->file('avatar')) {
+        if ($request->avatar) {
+            $avatar = $request->avatar;
+            $avatar = str_replace('data:image/jpeg;base64,', '', $avatar);
+            $avatar = str_replace(' ', '+', $avatar);
 
-            $avatar = \Image::make($request->file('avatar')->getRealPath())->fit(80, 80);
+            $avatar_image = \Image::make(base64_decode($avatar))->fit(80, 80);
 
-            Storage::disk('public')->put($file_path . $file_name, (string) $avatar->encode('jpg', 80));
+            $files = Storage::disk('public')->allFiles($file_path);
+            if (count($files) > 0) {
+                foreach($files as $file) {
+                    Storage::disk('public')->delete($file);
+                }
+            }
 
+            Storage::disk('public')->put($file_path . $file_name, $avatar_image->stream());
             $user->avatar = $file_path . $file_name;
         }
-
-
-        // if ($request->avatar) {
-        //     $file = base64_encode($request->avatar);
-        //     $request->avatar->storeAs($file_path, $file);
-        //     Storage::disk('public')->put($file_path, $file);
-        //     $user->avatar = $file_path . $file;
-        // }
 
         if ($request->input('profile')) {
             $user->profile = $request->input('profile');

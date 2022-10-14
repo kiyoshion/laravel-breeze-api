@@ -9,6 +9,7 @@ use App\Http\Controllers\OutputController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,4 +34,5 @@ Route::apiResources([
     'sections' => SectionController::class,
     'rooms' => RoomController::class,
     'types' => TypeController::class,
+    'users' => UserController::class,
 ]);

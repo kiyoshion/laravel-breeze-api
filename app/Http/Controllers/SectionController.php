@@ -50,7 +50,7 @@ class SectionController extends Controller
     public function show($id)
     {
         return response()->json([
-            'section' => Section::with(['outputs.user:id,name', 'flashes.user:id,name', 'material'])->findOrFail($id)
+            'section' => Section::with(['outputs.user:id,name,avatar', 'flashes.user:id,name,avatar', 'material'])->findOrFail($id)
         ], 200);
     }
 

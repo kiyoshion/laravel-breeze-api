@@ -19,8 +19,10 @@ class Flash extends Model
         'id',
         'front_title',
         'front_description',
+        'front_image',
         'back_title',
         'back_description',
+        'back_image',
         'material_id',
         'section_id',
         'user_id'

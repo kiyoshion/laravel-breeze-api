@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Flash;
 
 class FlashController extends Controller
@@ -36,6 +37,7 @@ class FlashController extends Controller
     public function store(Request $request)
     {
         $uuid = uniqid();
+
         $flash = Flash::firstOrCreate([
             'id' => $uuid,
             'front_title' => $request->input('front_title'),
@@ -46,6 +48,37 @@ class FlashController extends Controller
             'section_id' => $request->input('section_id'),
             'user_id' => $request->input('user_id'),
         ]);
+
+        $file_name = date('YmdHis') . $request->input('user_id') . '.jpg';
+        $file_path = 'img/user/' . $request->input('user_id') . '/flashes/';
+
+        if ($request->front_image) {
+            $front_image = $request->front_image;
+            $front_image = str_replace('data:image/jpeg;base64,', '', $front_image);
+            $front_image = str_replace(' ', '+', $front_image);
+
+            $front_image_data = \Image::make(base64_decode($front_image))->resize(400, null, function($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            Storage::disk('public')->put($file_path . $file_name, $front_image_data->stream());
+            $flash->front_image = $file_path . $file_name;
+            $flash->save();
+        }
+
+        if ($request->back_image) {
+            $back_image = $request->back_image;
+            $back_image = str_replace('data:image/jpeg;base64,', '', $back_image);
+            $back_image = str_replace(' ', '+', $back_image);
+
+            $back_image_data = \Image::make(base64_decode($back_image))->resize(400, null, function($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            Storage::disk('public')->put($file_path . $file_name, $back_image_data->stream());
+            $flash->back_image = $file_path . $file_name;
+            $flash->save();
+        }
 
         return response()->json([
             'flash' => $flash

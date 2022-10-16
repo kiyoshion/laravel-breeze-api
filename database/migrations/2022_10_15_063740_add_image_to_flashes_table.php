@@ -14,8 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('flashes', function (Blueprint $table) {
-            $table->string('front_image')->nullable();
-            $table->string('back_image')->nullable();
+            $table->string('front_image_small')->nullable();
+            $table->string('front_image_medium')->nullable();
+            $table->string('front_image_large')->nullable();
+            $table->string('back_image_small')->nullable();
+            $table->string('back_image_medium')->nullable();
+            $table->string('back_image_large')->nullable();
         });
     }
 
@@ -26,9 +30,13 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('flashed', function (Blueprint $table) {
-            $table->dropColumn('front_image');
-            $table->dropColumn('back_image');
+        Schema::table('flashes', function (Blueprint $table) {
+            $table->dropColumn('front_image_small');
+            $table->dropColumn('front_image_medium');
+            $table->dropColumn('front_image_large');
+            $table->dropColumn('back_image_small');
+            $table->dropColumn('back_image_medium');
+            $table->dropColumn('back_image_large');
         });
     }
 };

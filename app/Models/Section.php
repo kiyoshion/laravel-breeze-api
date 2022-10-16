@@ -37,7 +37,7 @@ class Section extends Model
 
     public function outputs()
     {
-        return $this->hasMany(Output::class);
+        return $this->hasMany(Output::class)->orderByDesc('created_at');
     }
 
     public function getOutputCountAttribute()
@@ -47,7 +47,7 @@ class Section extends Model
 
     public function flashes()
     {
-        return $this->hasMany(Flash::class);
+        return $this->hasMany(Flash::class)->orderByDesc('created_at');
     }
 
     public function getFlashCountAttribute()

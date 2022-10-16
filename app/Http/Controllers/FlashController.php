@@ -49,34 +49,83 @@ class FlashController extends Controller
             'user_id' => $request->input('user_id'),
         ]);
 
-        $file_name = date('YmdHis') . $request->input('user_id') . '.jpg';
-        $file_path = 'img/user/' . $request->input('user_id') . '/flashes/';
+        $file_path = 'img/flashes/' . $flash->id . '/';
 
         if ($request->front_image) {
+            $file_front_name_small = date('YmdHis') . uniqid() . '-small.jpg';
+            $file_front_name_medium = date('YmdHis') . uniqid() . '-medium.jpg';
+            $file_front_name_large = date('YmdHis') . uniqid() . '-large.jpg';
+
             $front_image = $request->front_image;
             $front_image = str_replace('data:image/jpeg;base64,', '', $front_image);
             $front_image = str_replace(' ', '+', $front_image);
 
-            $front_image_data = \Image::make(base64_decode($front_image))->resize(400, null, function($constraint) {
-                $constraint->aspectRatio();
-            });
+            // small
+            $front_image_data_small = \Image::make(base64_decode($front_image));
+            $front_image_data_small->orientate();
+            $front_image_data_small->fit(80, 80);
+            Storage::disk('public')->put($file_path . $file_front_name_small, $front_image_data_small->stream());
 
-            Storage::disk('public')->put($file_path . $file_name, $front_image_data->stream());
-            $flash->front_image = $file_path . $file_name;
+            // medium
+            $front_image_data_medium = \Image::make(base64_decode($front_image));
+            $front_image_data_medium->orientate();
+            $front_image_data_medium->resize(400, null, function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            Storage::disk('public')->put($file_path . $file_front_name_medium, $front_image_data_medium->stream());
+
+            // large
+            $front_image_data_large = \Image::make(base64_decode($front_image));
+            $front_image_data_large->orientate();
+            $front_image_data_large->resize(null, 1080, function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            Storage::disk('public')->put($file_path . $file_front_name_large, $front_image_data_large->stream());
+
+            $flash->front_image_small = $file_path . $file_front_name_small;
+            $flash->front_image_medium = $file_path . $file_front_name_medium;
+            $flash->front_image_large = $file_path . $file_front_name_large;
             $flash->save();
         }
 
         if ($request->back_image) {
+            $file_back_name_small = date('YmdHis') . uniqid() . '-small.jpg';
+            $file_back_name_medium = date('YmdHis') . uniqid() . '-medium.jpg';
+            $file_back_name_large = date('YmdHis') . uniqid() . '-large.jpg';
+
             $back_image = $request->back_image;
             $back_image = str_replace('data:image/jpeg;base64,', '', $back_image);
             $back_image = str_replace(' ', '+', $back_image);
 
-            $back_image_data = \Image::make(base64_decode($back_image))->resize(400, null, function($constraint) {
-                $constraint->aspectRatio();
-            });
+            // small
+            $back_image_data_small = \Image::make(base64_decode($back_image));
+            $back_image_data_small->orientate();
+            $back_image_data_small->fit(80, 80);
+            Storage::disk('public')->put($file_path . $file_back_name_small, $back_image_data_small->stream());
 
-            Storage::disk('public')->put($file_path . $file_name, $back_image_data->stream());
-            $flash->back_image = $file_path . $file_name;
+            // medium
+            $back_image_data_medium = \Image::make(base64_decode($back_image));
+            $back_image_data_medium->orientate();
+            $back_image_data_medium->resize(400, null, function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            Storage::disk('public')->put($file_path . $file_back_name_medium, $back_image_data_medium->stream());
+
+            // large
+            $back_image_data_large = \Image::make(base64_decode($back_image));
+            $back_image_data_large->orientate();
+            $back_image_data_large->resize(null, 1080, function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            Storage::disk('public')->put($file_path . $file_back_name_large, $back_image_data_large->stream());
+
+            $flash->back_image_small = $file_path . $file_back_name_small;
+            $flash->back_image_medium = $file_path . $file_back_name_medium;
+            $flash->back_image_large = $file_path . $file_back_name_large;
             $flash->save();
         }
 

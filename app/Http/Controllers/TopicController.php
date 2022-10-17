@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\Section;
-use App\Models\Output;
-use App\Models\Flash;
+use App\Models\Topic;
 
-class SectionController extends Controller
+class TopicController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -38,7 +35,16 @@ class SectionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $uuid = uniqid();
+        $topic = Topic::firstOrCreate([
+            'id' => $uuid,
+            'name' => $request->input('name'),
+            'lang' => $request->input('lang'),
+        ]);
+
+        return response()->json([
+            'topic' => $topic
+        ], 201);
     }
 
     /**
@@ -49,11 +55,7 @@ class SectionController extends Controller
      */
     public function show($id)
     {
-        $section = Section::with(['outputs.user:id,name,avatar', 'flashes.user:id,name,avatar', 'material.sections.outputs.user:id,name,avatar', 'material.sections.flashes.user:id,name,avatar'])->findOrFail($id);
-
-        return response()->json([
-            'section' => $section
-        ], 200);
+        //
     }
 
     /**

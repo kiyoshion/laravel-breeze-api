@@ -8,6 +8,7 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\OutputController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TopicController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
 
@@ -33,6 +34,7 @@ Route::apiResources([
     'outputs' => OutputController::class,
     'sections' => SectionController::class,
     'rooms' => RoomController::class,
+    'topics' => TopicController::class,
     'types' => TypeController::class,
     'users' => UserController::class,
 ]);

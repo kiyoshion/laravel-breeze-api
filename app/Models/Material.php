@@ -59,6 +59,11 @@ class Material extends Model
         return $this->belongsToMany(Room::class);
     }
 
+    public function topics()
+    {
+        return $this->belongsToMany(Topic::class);
+    }
+
     public function getFullPathPosterAttribute()
     {
         return Storage::url($this->poster);

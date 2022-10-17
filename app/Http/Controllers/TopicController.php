@@ -42,6 +42,8 @@ class TopicController extends Controller
             'lang' => $request->input('lang'),
         ]);
 
+        $topic->materials()->attach($request->input('material_id'));
+
         return response()->json([
             'topic' => $topic
         ], 201);
@@ -55,7 +57,11 @@ class TopicController extends Controller
      */
     public function show($id)
     {
-        //
+        $topic = Topic::with(['materials'])->findOrFail($id);
+
+        return response()->json([
+            'topic' => $topic
+        ], 200);
     }
 
     /**

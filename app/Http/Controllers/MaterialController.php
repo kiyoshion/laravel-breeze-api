@@ -128,7 +128,7 @@ class MaterialController extends Controller
     public function show($id)
     {
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections'])->findOrFail($id)
+            'material' => Material::with(['user:id,name', 'sections', 'topics'])->findOrFail($id)
         ], 200);
     }
 

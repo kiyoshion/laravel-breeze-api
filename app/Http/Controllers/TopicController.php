@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Topic;
+use App\Models\Join;
 
 class TopicController extends Controller
 {
@@ -37,12 +38,23 @@ class TopicController extends Controller
     {
         $uuid = uniqid();
         $topic = Topic::firstOrCreate([
+            'name' => $request->input('name')
+        ], [
             'id' => $uuid,
             'name' => $request->input('name'),
             'lang' => $request->input('lang'),
         ]);
 
-        $topic->materials()->attach($request->input('material_id'));
+        $topic->materials()->syncWithoutDetaching($request->input('material_id'));
+
+        $join = Join::firstOrCreate([
+            'user_id' => $request->input('user_id'),
+            'material_id' => $request->input('material_id')
+        ], [
+            'user_id' => $request->input('user_id'),
+            'material_id' => $request->input('material_id'),
+            'topic_id' => $topic->id,
+        ]);
 
         return response()->json([
             'topic' => $topic

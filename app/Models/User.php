@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Room::class);
     }
+
+    public function joins()
+    {
+        return $this->hasMany(Join::class);
+    }
 }

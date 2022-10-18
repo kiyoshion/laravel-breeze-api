@@ -27,6 +27,8 @@ class Material extends Model
         'fullPathPoster',
         'parentSectionCount',
         'childrenSectionCount',
+        'joinsUserCount',
+        'topicsUserCount',
     ];
 
     public function user()
@@ -64,6 +66,11 @@ class Material extends Model
         return $this->belongsToMany(Topic::class);
     }
 
+    public function joins()
+    {
+        return $this->hasMany(Join::class)->orderByDesc('created_at');
+    }
+
     public function getFullPathPosterAttribute()
     {
         return Storage::url($this->poster);
@@ -77,5 +84,25 @@ class Material extends Model
     public function getChildrenSectionCountAttribute()
     {
         return $this->sections->where('level', '=', 1)->count();
+    }
+
+    public function getJoinsUserCountAttribute()
+    {
+        return $this->joins->count();
+    }
+
+    public function getTopicsUserCountAttribute()
+    {
+        $tmp = [];
+        $topics = $this->topics;
+        foreach($topics as $topic) {
+            $tmp[] = [
+                'id' => $topic['id'],
+                'name' => $topic['name'],
+                'count' => $this->joins->where('topic_id', $topic['id'])->count()
+            ];
+        }
+
+        return $tmp;
     }
 }

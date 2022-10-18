@@ -25,4 +25,14 @@ class Topic extends Model
     {
         return $this->belongsToMany(Material::class);
     }
+
+    public function joins()
+    {
+        return $this->hasMany(Join::class);
+    }
+
+    // public function getTopicUserCountAttribute()
+    // {
+    //     $results = $this->joins()->where('topic_id', $this->id)->count();
+    // }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Output;
+use App\Models\Material;
 
 class OutputController extends Controller
 {
@@ -45,7 +46,7 @@ class OutputController extends Controller
         ]);
 
         return response()->json([
-            'output' => Output::with(['user:id,name', 'material', 'section'])->findOrFail($output->id)
+            'material' => Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'))
         ], 201);
     }
 

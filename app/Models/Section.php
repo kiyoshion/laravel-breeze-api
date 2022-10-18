@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Auth;
 
 class Section extends Model
 {
@@ -28,6 +29,7 @@ class Section extends Model
         'outputCount',
         'flashCount',
         'parentSection',
+        'currentUserOutputs',
     ];
 
     public function material()
@@ -60,5 +62,21 @@ class Section extends Model
         $parentSection = DB::table('sections')->where('id', '=', $this->parent_id)->first();
 
         return $parentSection;
+    }
+
+    public function getCurrentUserOutputsAttribute()
+    {
+        $section_id = $this->id;
+        $user_id = Auth::id();
+        $outputs = [];
+
+        $outputs = DB::table('outputs')->where([
+            'user_id' => $user_id,
+            'section_id' => $section_id
+            ])
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        return $outputs;
     }
 }

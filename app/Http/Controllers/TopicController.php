@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Topic;
 use App\Models\Join;
+use App\Models\Material;
 
 class TopicController extends Controller
 {
@@ -56,8 +57,10 @@ class TopicController extends Controller
             'topic_id' => $topic->id,
         ]);
 
+        $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'));
+
         return response()->json([
-            'topic' => $topic
+            'material' => $material
         ], 201);
     }
 

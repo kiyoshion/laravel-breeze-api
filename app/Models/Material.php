@@ -25,11 +25,11 @@ class Material extends Model
     ];
 
     protected $appends = [
+        'contentsCount',
+        'contentsChaptersCount',
         'fullPathPoster',
         'joinsUserCount',
         'joinsCurrentUserTopic',
-        'sectionsParentCount',
-        'sectionsChildrenCount',
         'topicsUserCount',
     ];
 
@@ -83,14 +83,19 @@ class Material extends Model
         return Storage::url($this->poster);
     }
 
-    public function getSectionsParentCountAttribute()
+    public function getContentsCountAttribute()
     {
-        return $this->sections->where('level', '=', 0)->count();
+        return $this->contents->count();
     }
 
-    public function getSectionsChildrenCountAttribute()
+    public function getContentsChaptersCountAttribute()
     {
-        return $this->sections->where('level', '=', 1)->count();
+        $total = 0;
+        foreach($this->contents as $content) {
+            $total += count($content->chapters);
+        }
+
+        return $total;
     }
 
     public function getJoinsUserCountAttribute()
@@ -118,8 +123,4 @@ class Material extends Model
         return $tmp;
     }
 
-    public function getCurrentUserLastUpdateAttribute()
-    {
-
-    }
 }

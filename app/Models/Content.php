@@ -23,6 +23,10 @@ class Content extends Model
         'material_id',
     ];
 
+    protected $append = [
+        'chaptersCount',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -36,5 +40,10 @@ class Content extends Model
     public function chapters()
     {
         return $this->hasMany(Chapter::class)->orderBy('order', 'asc');
+    }
+
+    public function getChaptersCountAttribute()
+    {
+        return $this->chapters->count();
     }
 }

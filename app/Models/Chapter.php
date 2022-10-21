@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Content extends Model
+class Chapter extends Model
 {
     use HasFactory;
 
@@ -20,7 +20,7 @@ class Content extends Model
         'title',
         'order',
         'user_id',
-        'material_id',
+        'content_id',
     ];
 
     public function user()
@@ -28,13 +28,8 @@ class Content extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function material()
+    public function content()
     {
-        return $this->belongsTo(Material::class);
-    }
-
-    public function chapters()
-    {
-        return $this->hasMany(Chapter::class)->orderBy('order', 'asc');
+        return $this->belongsTo(Content::class);
     }
 }

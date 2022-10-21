@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\FlashController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MaterialController;
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::apiResources([
+    'contents' => ContentController::class,
     'flashes' => FlashController::class,
     'items' => ItemController::class,
     'materials' => MaterialController::class,

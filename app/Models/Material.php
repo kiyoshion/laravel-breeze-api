@@ -73,6 +73,11 @@ class Material extends Model
         return $this->hasMany(Join::class)->orderByDesc('created_at');
     }
 
+    public function contents()
+    {
+        return $this->hasMany(Content::class)->orderBy('order', 'asc');
+    }
+
     public function getFullPathPosterAttribute()
     {
         return Storage::url($this->poster);

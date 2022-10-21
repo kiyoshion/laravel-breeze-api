@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Material;
+use App\Models\Chapter;
+use App\Models\Content;
 use App\Models\Section;
+use Auth;
 
 class MaterialController extends Controller
 {
@@ -71,50 +74,43 @@ class MaterialController extends Controller
         }
 
         $material = new Material();
-        $material->id = $uuid;
+        $material->id = uniqid();
         $material->poster = $file_path . $file_name;
         $material->thumbnail = $file_path . 'thumb-' . $file_name;
         $material->title = $request->input('title');
-        $material->user_id = $request->input('user_id');
+        $material->user_id = Auth::id();
         $material->save();
 
-        if ($request->input('sections')) {
-            $sections = json_decode($request->input('sections'), true);
-            $i = 0;
-            $parent_id = '';
-            foreach($sections as $sec) {
-                $uuid = uniqid();
-                $order = $i;
-                if ($sec['level'] === 1) {
-                    $section = Section::firstOrCreate([
-                        'id' => $uuid,
-                        'title' => $sec['title'],
-                        'level' => 1,
-                        'order' => $order,
-                        'parent_id' => $parent_id,
-                        'material_id' => $material->id,
-                    ]);
-                    $section->parent_id = $parent_id;
-                    $section->save();
-                } else {
-                    $section = Section::firstOrCreate([
-                        'id' => $uuid,
-                        'title' => $sec['title'],
-                        'level' => 0,
-                        'order' => $order,
-                        'parent_id' => NULL,
-                        'material_id' => $material->id,
-                    ]);
-                    $section->parent_id = $section->id;
-                    $section->save();
-                    $parent_id = $section->id;
+        if ($request->input('contents') && $request->input('chapters')) {
+            $contents = json_decode($request->input('contents'), true);
+            $chapters = json_decode($request->input('chapters'), true);
+
+            foreach($contents as $content) {
+                $order = $content['order'];
+                $content = Content::firstOrCreate([
+                    'id' => uniqid(),
+                    'title' => $content['title'],
+                    'order' => $order,
+                    'material_id' => $material->id,
+                    'user_id' => Auth::id()
+                ]);
+
+                foreach($chapters as $chapter) {
+                    if ($chapter['parentOrder'] === $order) {
+                        $chapter = Chapter::firstOrCreate([
+                            'id' => uniqid(),
+                            'title' => $chapter['title'],
+                            'order' => $chapter['order'],
+                            'content_id' => $content->id,
+                            'user_id' => Auth::id()
+                        ]);
+                    }
                 }
-                $i++;
             }
         }
 
         return response()->json([
-            'material' => Material::findOrFail($material->id)->with(['sections', 'users:id,name'])
+            'material' => Material::with(['contents.chapters', 'user:id,name'])->findOrFail($material->id)
         ], 201);
 
     }
@@ -128,7 +124,7 @@ class MaterialController extends Controller
     public function show($id)
     {
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($id)
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar'])->findOrFail($id)
         ], 200);
     }
 

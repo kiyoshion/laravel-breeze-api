@@ -53,6 +53,11 @@ class Material extends Model
         return $this->hasMany(Output::class);
     }
 
+    public function memos()
+    {
+        return $this->hasMany(Memo::class);
+    }
+
     public function flashes()
     {
         return $this->hasMany(Flash::class);

@@ -124,7 +124,7 @@ class MaterialController extends Controller
     public function show($id)
     {
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar'])->findOrFail($id)
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname'])->findOrFail($id)
         ], 200);
     }
 

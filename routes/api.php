@@ -7,6 +7,7 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\FlashController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\MemoController;
 use App\Http\Controllers\OutputController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\RoomController;
@@ -37,6 +38,7 @@ Route::apiResources([
     'flashes' => FlashController::class,
     'items' => ItemController::class,
     'materials' => MaterialController::class,
+    'memos' => MemoController::class,
     'outputs' => OutputController::class,
     'sections' => SectionController::class,
     'rooms' => RoomController::class,

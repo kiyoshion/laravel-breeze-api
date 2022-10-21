@@ -3,24 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Topic;
-use App\Models\Join;
 use App\Models\Material;
+use App\Models\Join;
+use Auth;
 
-class TopicController extends Controller
+class HomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $topics = Topic::where('lang', 'ja')->limit(50)->get();
-        // $topics = Topic::orderByDesc('joinsCount')->limit(10)->get();
+        $joins = Join::select(['material_id', 'topic_id'])->with(['topic:id,name'])->where('user_id', Auth::id())->orderByDesc('created_at')->get();
+
+        $material_ids = [];
+        foreach($joins as $m) {
+            $material_ids[] = $m['material_id'];
+        }
+
+        $materials = Material::with(['joins.topic'])->whereIn('id', $material_ids)->get();
 
         return response()->json([
-            'topics' => $topics
+            'joins' => $joins,
+            'materials' => $materials
         ], 200);
     }
 
@@ -42,31 +49,7 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = uniqid();
-        $topic = Topic::firstOrCreate([
-            'name' => $request->input('name')
-        ], [
-            'id' => $uuid,
-            'name' => $request->input('name'),
-            'lang' => $request->input('lang'),
-        ]);
-
-        $topic->materials()->syncWithoutDetaching($request->input('material_id'));
-
-        $join = Join::firstOrCreate([
-            'user_id' => $request->input('user_id'),
-            'material_id' => $request->input('material_id')
-        ], [
-            'user_id' => $request->input('user_id'),
-            'material_id' => $request->input('material_id'),
-            'topic_id' => $topic->id,
-        ]);
-
-        $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'));
-
-        return response()->json([
-            'material' => $material
-        ], 201);
+        //
     }
 
     /**
@@ -77,11 +60,7 @@ class TopicController extends Controller
      */
     public function show($id)
     {
-        $topic = Topic::with(['materials'])->findOrFail($id);
-
-        return response()->json([
-            'topic' => $topic
-        ], 200);
+        //
     }
 
     /**

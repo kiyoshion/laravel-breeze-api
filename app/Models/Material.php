@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Auth;
 
 class Material extends Model
 {
@@ -25,9 +26,10 @@ class Material extends Model
 
     protected $appends = [
         'fullPathPoster',
-        'parentSectionCount',
-        'childrenSectionCount',
         'joinsUserCount',
+        'joinsCurrentUserTopic',
+        'sectionsParentCount',
+        'sectionsChildrenCount',
         'topicsUserCount',
     ];
 
@@ -76,12 +78,12 @@ class Material extends Model
         return Storage::url($this->poster);
     }
 
-    public function getParentSectionCountAttribute()
+    public function getSectionsParentCountAttribute()
     {
         return $this->sections->where('level', '=', 0)->count();
     }
 
-    public function getChildrenSectionCountAttribute()
+    public function getSectionsChildrenCountAttribute()
     {
         return $this->sections->where('level', '=', 1)->count();
     }
@@ -89,6 +91,11 @@ class Material extends Model
     public function getJoinsUserCountAttribute()
     {
         return $this->joins->count();
+    }
+
+    public function getJoinsCurrentUserTopicAttribute()
+    {
+        return $this->joins->where('user_id', Auth::id())->first();
     }
 
     public function getTopicsUserCountAttribute()
@@ -104,5 +111,10 @@ class Material extends Model
         }
 
         return $tmp;
+    }
+
+    public function getCurrentUserLastUpdateAttribute()
+    {
+
     }
 }

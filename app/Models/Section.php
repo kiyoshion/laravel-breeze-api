@@ -30,6 +30,8 @@ class Section extends Model
         'flashCount',
         'parentSection',
         'currentUserOutputs',
+        'currentUserStatus',
+        'currentUserStatusDoneCount',
     ];
 
     public function material()
@@ -50,6 +52,11 @@ class Section extends Model
     public function flashes()
     {
         return $this->hasMany(Flash::class)->orderByDesc('created_at');
+    }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
     }
 
     public function getFlashCountAttribute()
@@ -78,5 +85,19 @@ class Section extends Model
             ->first();
 
         return $outputs;
+    }
+
+    public function getCurrentUserStatusAttribute()
+    {
+        $status = $this->statuses->where('user_id', '=', Auth::id())->first();
+
+        return $status;
+    }
+
+    public function getCurrentUserStatusDoneCountAttribute()
+    {
+        $status = $this->statuses->where('user_id', '=', Auth::id())->where('value', '=', 'done')->where('section_id', '=', $this->parent_id)->count();
+
+        return $status;
     }
 }

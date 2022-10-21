@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Topic;
-use App\Models\Join;
+use App\Models\Status;
 use App\Models\Material;
+use Auth;
 
-class TopicController extends Controller
+class StatusController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +16,7 @@ class TopicController extends Controller
      */
     public function index()
     {
-        $topics = Topic::where('lang', 'ja')->limit(50)->get();
-        // $topics = Topic::orderByDesc('joinsCount')->limit(10)->get();
-
-        return response()->json([
-            'topics' => $topics
-        ], 200);
+        //
     }
 
     /**
@@ -42,25 +37,14 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = uniqid();
-        $topic = Topic::firstOrCreate([
-            'name' => $request->input('name')
-        ], [
-            'id' => $uuid,
-            'name' => $request->input('name'),
-            'lang' => $request->input('lang'),
-        ]);
-
-        $topic->materials()->syncWithoutDetaching($request->input('material_id'));
-
-        $join = Join::firstOrCreate([
-            'user_id' => $request->input('user_id'),
-            'material_id' => $request->input('material_id')
-        ], [
-            'user_id' => $request->input('user_id'),
-            'material_id' => $request->input('material_id'),
-            'topic_id' => $topic->id,
-        ]);
+        $status = Status::updateOrCreate([
+            'section_id' => $request->input('section_id'),
+            'user_id' => Auth::id()
+        ],
+        [
+            'value' => $request->input('value')
+        ]
+        );
 
         $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'));
 
@@ -77,11 +61,7 @@ class TopicController extends Controller
      */
     public function show($id)
     {
-        $topic = Topic::with(['materials'])->findOrFail($id);
-
-        return response()->json([
-            'topic' => $topic
-        ], 200);
+        //
     }
 
     /**

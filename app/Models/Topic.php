@@ -21,6 +21,11 @@ class Topic extends Model
         'lang',
     ];
 
+    protected $appends = [
+        'joinsCount',
+        // 'popularTopics',
+    ];
+
     public function materials()
     {
         return $this->belongsToMany(Material::class);
@@ -31,8 +36,19 @@ class Topic extends Model
         return $this->hasMany(Join::class);
     }
 
-    // public function getTopicUserCountAttribute()
-    // {
-    //     $results = $this->joins()->where('topic_id', $this->id)->count();
-    // }
+    public function getJoinsCountAttribute()
+    {
+        return $this->joins->count();
+    }
+
+    public function getPopularTopicsAttribute()
+    {
+        $joinsCount = $this->joinsCount;
+        // return $this->orderByDesc($this->getJoinsCountAttribute())->get();
+        // $joins = $this->jons;
+        // $joins = array_column($joins, 'joinsCount');
+        // array_multisort($joins, SORT_DESC, $joins);
+
+        // return $joins;
+    }
 }

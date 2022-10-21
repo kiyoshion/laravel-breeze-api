@@ -165,4 +165,28 @@ class MaterialController extends Controller
     {
         //
     }
+
+    public function scrap(Request $request)
+    {
+        // $url = "https://www.google.com/search?q=" . $request->input('query') . "&tbm=isch";
+        // $dom = new \DOMDocument('1.0', 'UTF-8');
+        // $html = file_get_contents($url);
+        // $html = mb_convert_encoding($html, "HTML-ENTITIES", 'auto');
+        // @$dom->loadHTML($html);
+        // // $xpath = new \DOMXpath($dom);
+        // // $contents = $xpath->query('//img[contains(@src, "jpg")]');
+        // $contents = $dom->getElementsByTagName('img');
+
+        // $resutls = [];
+
+        // foreach($contents as $value) {
+        //     $resutls[] = $value->ownerDocument->saveXML($value);
+        // }
+
+        // return response()->json([
+        //     'contents' => $contents,
+        //     'results' => $resutls
+        // ], 200);
+
+    }
 }

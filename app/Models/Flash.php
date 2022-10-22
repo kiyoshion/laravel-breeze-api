@@ -28,7 +28,7 @@ class Flash extends Model
         'back_image_medium',
         'back_image_large',
         'material_id',
-        'section_id',
+        'chapter_id',
         'user_id'
     ];
 
@@ -37,9 +37,9 @@ class Flash extends Model
         return $this->belongsTo(Material::class);
     }
 
-    public function section()
+    public function chapter()
     {
-        return $this->belongsTo(Section::class);
+        return $this->belongsTo(chapter::class);
     }
 
     public function user()

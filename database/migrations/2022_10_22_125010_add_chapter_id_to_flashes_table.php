@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('statuses', function (Blueprint $table) {
-            $table->id();
-            $table->string('value')->nullable();
-            $table->foreignId('user_id')->constrained();
-            $table->timestamps();
+        Schema::table('flashes', function (Blueprint $table) {
+            $table->foreignUuid('chapter_id')->constrained();
         });
     }
 
@@ -28,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('statuses');
+        Schema::table('flashes', function (Blueprint $table) {
+            $table->dropForeign(['chapter_id']);
+        });
     }
 };

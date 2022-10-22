@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Flash;
+use App\Models\Material;
+use Auth;
 
 class FlashController extends Controller
 {
@@ -36,17 +38,15 @@ class FlashController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = uniqid();
-
         $flash = Flash::firstOrCreate([
-            'id' => $uuid,
+            'id' => uniqid(),
             'front_title' => $request->input('front_title'),
             'front_description' => $request->input('front_description'),
             'back_title' => $request->input('back_title'),
             'back_description' => $request->input('back_description'),
             'material_id' => $request->input('material_id'),
-            'section_id' => $request->input('section_id'),
-            'user_id' => $request->input('user_id'),
+            'chapter_id' => $request->input('chapter_id'),
+            'user_id' => Auth::id(),
         ]);
 
         $file_path = 'img/flashes/' . $flash->id . '/';
@@ -130,7 +130,7 @@ class FlashController extends Controller
         }
 
         return response()->json([
-            'flash' => $flash
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname'])->findOrFail($request->input('material_id'))
         ], 201);
     }
 

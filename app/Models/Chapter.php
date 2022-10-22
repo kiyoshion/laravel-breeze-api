@@ -27,6 +27,8 @@ class Chapter extends Model
 
     protected $appends = [
         'currentUserMemo',
+        'memosCount',
+        'flashesCount',
     ];
 
     public function user()
@@ -41,7 +43,22 @@ class Chapter extends Model
 
     public function memos()
     {
-        return $this->hasMany(Memo::class);
+        return $this->hasMany(Memo::class)->orderByDesc('created_at');
+    }
+
+    public function getMemosCountAttribute()
+    {
+        return $this->memos->count();
+    }
+
+    public function flashes()
+    {
+        return $this->hasMany(Flash::class)->orderByDesc('created_at');
+    }
+
+    public function getFlashesCountAttribute()
+    {
+        return $this->flashes->count();
     }
 
     public function getCurrentUserMemoAttribute()

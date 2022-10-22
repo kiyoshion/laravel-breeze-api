@@ -17,11 +17,16 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('front_title');
             $table->string('front_description')->nullable();
+            $table->string('front_image_small')->nullable();
+            $table->string('front_image_medium')->nullable();
+            $table->string('front_image_large')->nullable();
             $table->string('back_title');
             $table->string('back_description')->nullable();
+            $table->string('back_image_small')->nullable();
+            $table->string('back_image_medium')->nullable();
+            $table->string('back_image_large')->nullable();
             $table->foreignUuid('material_id')->constrained();
-            $table->foreignUuid('section_id')->constrained();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

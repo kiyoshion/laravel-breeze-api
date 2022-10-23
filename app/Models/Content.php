@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Auth;
 
 class Content extends Model
 {
@@ -23,8 +25,9 @@ class Content extends Model
         'material_id',
     ];
 
-    protected $append = [
+    protected $appends = [
         'chaptersCount',
+        'currentUserStatusDoneCount',
     ];
 
     public function user()
@@ -45,5 +48,24 @@ class Content extends Model
     public function getChaptersCountAttribute()
     {
         return $this->chapters->count();
+    }
+
+    public function getCurrentUserStatusDoneCountAttribute()
+    {
+        $chapters = $this->chapters;
+
+        $total = 0;
+        foreach($chapters as $chapter) {
+            $total += DB::table('statuses as status')
+                ->where('status.user_id', '=', Auth::id())
+                ->where('status.value', '=', 'done')
+                ->join('chapters as chap', function ($join) {
+                    $join->on('status.chapter_id', '=', 'chap.id');
+                })
+                ->where('chap.id', '=', $chapter->id)
+                ->count();
+        }
+
+        return $total;
     }
 }

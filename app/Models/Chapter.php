@@ -29,6 +29,7 @@ class Chapter extends Model
         'currentUserMemo',
         'memosCount',
         'flashesCount',
+        'currentUserStatus',
     ];
 
     public function user()
@@ -61,6 +62,11 @@ class Chapter extends Model
         return $this->flashes->count();
     }
 
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
+
     public function getCurrentUserMemoAttribute()
     {
         $memo = DB::table('memos')->where([
@@ -71,5 +77,12 @@ class Chapter extends Model
             ->first();
 
         return $memo;
+    }
+
+    public function getCurrentUserStatusAttribute()
+    {
+        $status = $this->statuses->where('user_id', '=', Auth::id())->first();
+
+        return $status;
     }
 }

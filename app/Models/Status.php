@@ -12,7 +12,7 @@ class Status extends Model
     protected $fillable = [
         'value',
         'user_id',
-        'section_id',
+        'chapter_id',
     ];
 
     public function user()
@@ -20,8 +20,8 @@ class Status extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function section()
+    public function chapter()
     {
-        return $this->belongsTo(Section::class);
+        return $this->belongsTo(Chapter::class);
     }
 }

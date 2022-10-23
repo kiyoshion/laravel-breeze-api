@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Chapter;
 
 class ChapterController extends Controller
 {
@@ -45,7 +46,11 @@ class ChapterController extends Controller
      */
     public function show($id)
     {
-        //
+        $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])->findOrFail($id);
+
+        return response()->json([
+            'chapter' => $chapter
+        ], 200);
     }
 
     /**

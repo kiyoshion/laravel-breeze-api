@@ -38,18 +38,21 @@ class StatusController extends Controller
     public function store(Request $request)
     {
         $status = Status::updateOrCreate([
-            'section_id' => $request->input('section_id'),
+            'chapter_id' => $request->input('chapter_id'),
             'user_id' => Auth::id()
-        ],
-        [
+        ],[
             'value' => $request->input('value')
-        ]
-        );
-
-        $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'));
+        ]);
 
         return response()->json([
-            'material' => $material
+            'material' => Material::with([
+                'user:id,name',
+                'contents.chapters',
+                'topics',
+                'joins.user:id,name,avatar,displayname',
+                'memos.user:id,name,avatar,displayname',
+                'flashes.user:id,name,avatar,displayname'
+            ])->findOrFail($request->input('material_id'))
         ], 201);
     }
 

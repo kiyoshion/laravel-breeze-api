@@ -37,11 +37,24 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->input('value') === 'now') {
+            $status_nows = Status::where('material_id', '=', $request->input('material_id'))
+            ->where('user_id', '=', Auth::id())
+            ->where('value', '=', 'now')
+            ->get();
+
+            foreach($status_nows as $status) {
+                $status->value = 'pause';
+                $status->update();
+            }
+        }
+
         $status = Status::updateOrCreate([
             'chapter_id' => $request->input('chapter_id'),
             'user_id' => Auth::id()
         ],[
-            'value' => $request->input('value')
+            'value' => $request->input('value'),
+            'material_id' => $request->input('material_id'),
         ]);
 
         return response()->json([

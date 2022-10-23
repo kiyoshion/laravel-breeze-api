@@ -13,6 +13,7 @@ class Status extends Model
         'value',
         'user_id',
         'chapter_id',
+        'material_id',
     ];
 
     public function user()
@@ -23,5 +24,10 @@ class Status extends Model
     public function chapter()
     {
         return $this->belongsTo(Chapter::class);
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class);
     }
 }

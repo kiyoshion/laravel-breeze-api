@@ -26,10 +26,12 @@ class Chapter extends Model
     ];
 
     protected $appends = [
+        'currentUserFlash',
         'currentUserMemo',
         'memosCount',
         'flashesCount',
         'currentUserStatus',
+        'statusesNowCount',
     ];
 
     public function user()
@@ -79,10 +81,27 @@ class Chapter extends Model
         return $memo;
     }
 
+    public function getCurrentUserFlashAttribute()
+    {
+        $flash = DB::table('flashes')->where([
+            'user_id' => Auth::id(),
+            'chapter_id' => $this->id
+            ])
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        return $flash;
+    }
+
     public function getCurrentUserStatusAttribute()
     {
         $status = $this->statuses->where('user_id', '=', Auth::id())->first();
 
         return $status;
+    }
+
+    public function getStatusesNowCountAttribute()
+    {
+        return $this->statuses->where('value', '=', 'now')->count();
     }
 }

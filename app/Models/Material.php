@@ -83,6 +83,11 @@ class Material extends Model
         return $this->hasMany(Content::class)->orderBy('order', 'asc');
     }
 
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
+
     public function getFullPathPosterAttribute()
     {
         return Storage::url($this->poster);

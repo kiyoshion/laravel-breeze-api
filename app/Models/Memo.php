@@ -20,6 +20,7 @@ class Memo extends Model
         'body',
         'material_id',
         'chapter_id',
+        'topic_id',
         'user_id'
     ];
 
@@ -36,5 +37,10 @@ class Memo extends Model
     public function chapter()
     {
         return $this->belongsTo(Chapter::class);
+    }
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
     }
 }

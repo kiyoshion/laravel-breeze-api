@@ -23,7 +23,6 @@ class Topic extends Model
 
     protected $appends = [
         'joinsCount',
-        // 'popularTopics',
     ];
 
     public function materials()
@@ -34,6 +33,11 @@ class Topic extends Model
     public function joins()
     {
         return $this->hasMany(Join::class);
+    }
+
+    public function memos()
+    {
+        return $this->hasMany(Memo::class);
     }
 
     public function getJoinsCountAttribute()

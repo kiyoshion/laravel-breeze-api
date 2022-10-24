@@ -40,6 +40,11 @@ class Topic extends Model
         return $this->hasMany(Memo::class);
     }
 
+    public function flashes()
+    {
+        return $this->hasMany(Flash::class);
+    }
+
     public function getJoinsCountAttribute()
     {
         return $this->joins->count();

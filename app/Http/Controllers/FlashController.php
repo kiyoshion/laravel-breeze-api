@@ -46,6 +46,7 @@ class FlashController extends Controller
             'back_description' => $request->input('back_description'),
             'material_id' => $request->input('material_id'),
             'chapter_id' => $request->input('chapter_id'),
+            'topic_id' => $request->input('topic_id'),
             'user_id' => Auth::id(),
         ]);
 

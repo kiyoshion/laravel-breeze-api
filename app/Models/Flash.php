@@ -29,6 +29,7 @@ class Flash extends Model
         'back_image_large',
         'material_id',
         'chapter_id',
+        'topic_id',
         'user_id'
     ];
 
@@ -45,5 +46,10 @@ class Flash extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
     }
 }

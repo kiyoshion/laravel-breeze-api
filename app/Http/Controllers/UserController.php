@@ -71,28 +71,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $file_result_path = '';
-        $file_name = date('YmdHis') . $id . '.jpg';
-        $file_path = 'img/user/' . $id . '/';
-
         $user = User::findOrFail($id);
 
         if ($request->avatar) {
             $avatar = $request->avatar;
-            $avatar = str_replace('data:image/jpeg;base64,', '', $avatar);
-            $avatar = str_replace(' ', '+', $avatar);
 
-            $avatar_image = \Image::make(base64_decode($avatar))->fit(80, 80);
+            $avatar_image = \Image::make($avatar)->fit(80, 80);
+            $bin = base64_encode($avatar_image->encode('jpeg'));
 
-            $files = Storage::disk('public')->allFiles($file_path);
-            if (count($files) > 0) {
-                foreach($files as $file) {
-                    Storage::disk('public')->delete($file);
-                }
-            }
-
-            Storage::disk('public')->put($file_path . $file_name, $avatar_image->stream());
-            $user->avatar = $file_path . $file_name;
+            $user->avatar = $bin;
+            $user->save();
         }
 
         if ($request->input('profile')) {

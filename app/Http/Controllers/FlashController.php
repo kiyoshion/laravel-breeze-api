@@ -53,7 +53,6 @@ class FlashController extends Controller
         $file_path = 'img/flashes/' . $flash->id . '/';
 
         if ($request->front_image) {
-            $file_front_name_small = date('YmdHis') . uniqid() . '-small.jpg';
             $file_front_name_medium = date('YmdHis') . uniqid() . '-medium.jpg';
             $file_front_name_large = date('YmdHis') . uniqid() . '-large.jpg';
 
@@ -62,10 +61,10 @@ class FlashController extends Controller
             $front_image = str_replace(' ', '+', $front_image);
 
             // small
-            $front_image_data_small = \Image::make(base64_decode($front_image));
-            $front_image_data_small->orientate();
-            $front_image_data_small->fit(80, 80);
-            Storage::disk('public')->put($file_path . $file_front_name_small, $front_image_data_small->stream());
+            $front_image_data_small = \Image::make($request->front_image)->fit(80, 80);
+            $bin_front_image_small = base64_encode($front_image_data_small->encode('jpeg'));
+            $flash->front_image_small = $bin_front_image_small;
+            $flash->save();
 
             // medium
             $front_image_data_medium = \Image::make(base64_decode($front_image));
@@ -79,24 +78,25 @@ class FlashController extends Controller
             // large
             $front_image_data_large = \Image::make(base64_decode($front_image));
             $front_image_data_large->orientate();
+            $width = $front_image_data_large->width();
             $height = $front_image_data_large->height();
+
             if ($height >= 720) {
                 $height = 720;
             }
+
             $front_image_data_large->heighten($height, function($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
             Storage::disk('public')->put($file_path . $file_front_name_large, $front_image_data_large->stream());
 
-            $flash->front_image_small = $file_path . $file_front_name_small;
             $flash->front_image_medium = $file_path . $file_front_name_medium;
             $flash->front_image_large = $file_path . $file_front_name_large;
             $flash->save();
         }
 
         if ($request->back_image) {
-            $file_back_name_small = date('YmdHis') . uniqid() . '-small.jpg';
             $file_back_name_medium = date('YmdHis') . uniqid() . '-medium.jpg';
             $file_back_name_large = date('YmdHis') . uniqid() . '-large.jpg';
 
@@ -105,10 +105,12 @@ class FlashController extends Controller
             $back_image = str_replace(' ', '+', $back_image);
 
             // small
-            $back_image_data_small = \Image::make(base64_decode($back_image));
+            $back_image_data_small = \Image::make(base64_decode($request->back_image));
             $back_image_data_small->orientate();
             $back_image_data_small->fit(80, 80);
-            Storage::disk('public')->put($file_path . $file_back_name_small, $back_image_data_small->stream());
+            $bin_back_image_small = base64_encode($back_image_data_small->encode('jpeg'));
+            $flash->back_image_small = $bin_back_image_small;
+            $flash->save();
 
             // medium
             $back_image_data_medium = \Image::make(base64_decode($back_image));

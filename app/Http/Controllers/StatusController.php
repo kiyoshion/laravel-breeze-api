@@ -37,8 +37,8 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->input('value') === 'now') {
-            $status_nows = Status::where('material_id', '=', $request->input('material_id'))
+        if ($request->value === 'now') {
+            $status_nows = Status::where('material_id', '=', $request->material_id)
             ->where('user_id', '=', Auth::id())
             ->where('value', '=', 'now')
             ->get();
@@ -50,11 +50,11 @@ class StatusController extends Controller
         }
 
         $status = Status::updateOrCreate([
-            'chapter_id' => $request->input('chapter_id'),
+            'chapter_id' => $request->chapter_id,
             'user_id' => Auth::id()
         ],[
-            'value' => $request->input('value'),
-            'material_id' => $request->input('material_id'),
+            'value' => $request->value,
+            'material_id' => $request->material_id,
         ]);
 
         return response()->json([
@@ -64,8 +64,9 @@ class StatusController extends Controller
                 'topics',
                 'joins.user:id,name,avatar,displayname',
                 'memos.user:id,name,avatar,displayname',
-                'flashes.user:id,name,avatar,displayname'
-            ])->findOrFail($request->input('material_id'))
+                'flashes.user:id,name,avatar,displayname',
+                'type:id,name,label_contents,label_chapters',
+            ])->findOrFail($request->material_id)
         ], 201);
     }
 

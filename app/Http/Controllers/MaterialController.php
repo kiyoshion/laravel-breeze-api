@@ -23,12 +23,12 @@ class MaterialController extends Controller
         if ($request->query('key')) {
             $key = $request->query('key') . '%';
             $materials = Material::where('title', 'LIKE', $key)
-                ->with('user:id,name')
+                ->with(['type:id,name'])
                 ->limit(12)
                 ->orderBy('title')
                 ->get();
         } else {
-            $materials = Material::with('user:id,name')
+            $materials = Material::with(['type:id,name'])
                 ->orderBy('created_at', 'desc')
                 ->take(12)
                 ->get();
@@ -56,9 +56,14 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = uniqid();
-        $file_result_path = '';
-        $file_name = date('YmdHis') . $uuid . '.jpg';
+        $material = new Material();
+        $material->id = uniqid();
+        $material->title = $request->title;
+        $material->user_id = Auth::id();
+        $material->type_id = $request->type_id;
+        $material->save();
+
+        $file_name = date('YmdHis') . uniqid() . '.jpg';
         $file_path = 'img/materials/';
 
         if ($request->file('poster')) {
@@ -67,19 +72,17 @@ class MaterialController extends Controller
 
             Storage::disk('public')->put($file_path . $file_name, (string) $poster->encode('jpg', 80));
 
-            $thumbnail = \Image::make($request->file('poster')->getRealPath())->fit(90, 120);
+            $material->poster = $file_path . $file_name;
 
-            Storage::disk('public')->put($file_path . 'thumb-' . $file_name, (string) $thumbnail->encode('jpg', 80));
+            $thumbnail = \Image::make($request->file('poster')->getRealPath())->resize(null, 160, function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $bin = base64_encode($thumbnail->encode('jpeg'));
 
+            $material->thumbnail = $bin;
+            $material->save();
         }
-
-        $material = new Material();
-        $material->id = uniqid();
-        $material->poster = $file_path . $file_name;
-        $material->thumbnail = $file_path . 'thumb-' . $file_name;
-        $material->title = $request->input('title');
-        $material->user_id = Auth::id();
-        $material->save();
 
         if ($request->input('contents') && $request->input('chapters')) {
             $contents = json_decode($request->input('contents'), true);
@@ -110,7 +113,7 @@ class MaterialController extends Controller
         }
 
         return response()->json([
-            'material' => Material::with(['contents.chapters', 'user:id,name'])->findOrFail($material->id)
+            'material' => Material::with(['contents.chapters', 'user:id,name', 'type:id,name'])->findOrFail($material->id)
         ], 201);
 
     }
@@ -124,7 +127,7 @@ class MaterialController extends Controller
     public function show($id)
     {
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname'])->findOrFail($id)
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'type:id,name,label_contents,label_chapters'])->findOrFail($id)
         ], 200);
     }
 

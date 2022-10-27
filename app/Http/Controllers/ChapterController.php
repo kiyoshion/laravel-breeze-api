@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Chapter;
+use App\Models\Flash;
+use App\Models\Join;
+use App\Models\Memo;
+use Auth;
 
 class ChapterController extends Controller
 {
@@ -46,7 +50,32 @@ class ChapterController extends Controller
      */
     public function show($id)
     {
-        $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])->findOrFail($id);
+        if (Auth::user() && Join::where('user_id', Auth::id())->exists()) {
+            $topic_id = Join::select(['topic_id'])->where('user_id', Auth::id())->first();
+
+            $memos = Memo::with(['user:id,name,avatar,displayname'])
+            ->where('chapter_id', $id)
+            ->where('topic_id', $topic_id)
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
+            $flashes = Flash::with(['user:id,name,avatar,displayname'])
+            ->where('chapter_id', $id)
+            ->where('topic_id', $topic_id)
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
+            $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])
+            ->findOrFail($id);
+
+            $chapter['memos'] = $memos;
+            $chapter['flashes'] = $flashes;
+        } else {
+            $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])->findOrFail($id);
+        }
+
 
         return response()->json([
             'chapter' => $chapter

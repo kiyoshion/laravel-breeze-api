@@ -47,7 +47,7 @@ class MemoController extends Controller
         ]);
 
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname'])->findOrFail($request->input('material_id'))
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'type:id,name,label_contents,label_chapters'])->findOrFail($request->input('material_id'))
         ], 201);
     }
 

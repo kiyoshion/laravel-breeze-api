@@ -20,13 +20,19 @@ class Material extends Model
     protected $fillable = [
         'id',
         'title',
+        'poster',
+        'thumbnail',
         'type_id',
-        'user_id'
+        'user_id',
     ];
 
     protected $appends = [
+        'chaptersTotalCount',
         'contentsCount',
         'contentsChaptersCount',
+        'currentUserIsJoined',
+        'currentUserOutputCount',
+        'currentUserStatusDoneCount',
         'fullPathPoster',
         'joinsUserCount',
         'joinsCurrentUserTopic',
@@ -113,9 +119,37 @@ class Material extends Model
         return $this->joins->count();
     }
 
+    public function getCurrentUserIsJoinedAttribute()
+    {
+        return $this->joins->containsStrict('user_id', Auth::id());
+    }
+
     public function getJoinsCurrentUserTopicAttribute()
     {
         return $this->joins->where('user_id', Auth::id())->first();
+    }
+
+    public function getCurrentUserOutputCountAttribute()
+    {
+        $memo_count = $this->memos->where('user_id', Auth::id())->count();
+        $flash_count = $this->flashes->where('user_id', Auth::id())->count();
+
+        return $memo_count + $flash_count;
+    }
+
+    public function getCurrentUserStatusDoneCountAttribute()
+    {
+        return $this->statuses->where('user_id', Auth::id())->where('value', 'done')->count();
+    }
+
+    public function getChaptersTotalCountAttribute()
+    {
+        $total = 0;
+        foreach($this->contents as $content) {
+            $total += $content->chapters->count();
+        }
+
+        return $total;
     }
 
     public function getTopicsUserCountAttribute()

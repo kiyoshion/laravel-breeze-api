@@ -42,11 +42,10 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = uniqid();
         $topic = Topic::firstOrCreate([
             'name' => $request->input('name')
         ], [
-            'id' => $uuid,
+            'id' => uniqid(),
             'name' => $request->input('name'),
             'lang' => $request->input('lang'),
         ]);
@@ -62,7 +61,7 @@ class TopicController extends Controller
             'topic_id' => $topic->id,
         ]);
 
-        $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar'])->findOrFail($request->input('material_id'));
+        $material = Material::with(['user:id,name', 'sections', 'topics', 'joins.user:id,name,avatar', 'type:id,name,label_contents,label_chapters'])->findOrFail($request->input('material_id'));
 
         return response()->json([
             'material' => $material

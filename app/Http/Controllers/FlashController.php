@@ -79,7 +79,11 @@ class FlashController extends Controller
             // large
             $front_image_data_large = \Image::make(base64_decode($front_image));
             $front_image_data_large->orientate();
-            $front_image_data_large->resize(null, 1080, function($constraint) {
+            $height = $front_image_data_large->height();
+            if ($height >= 720) {
+                $height = 720;
+            }
+            $front_image_data_large->heighten($height, function($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
@@ -118,7 +122,11 @@ class FlashController extends Controller
             // large
             $back_image_data_large = \Image::make(base64_decode($back_image));
             $back_image_data_large->orientate();
-            $back_image_data_large->resize(null, 1080, function($constraint) {
+            $height = $back_image_data_large->height();
+            if ($height >= 720) {
+                $height = 720;
+            }
+            $back_image_data_large->heighten($height, function($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
@@ -131,7 +139,7 @@ class FlashController extends Controller
         }
 
         return response()->json([
-            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname'])->findOrFail($request->input('material_id'))
+            'material' => Material::with(['user:id,name', 'sections', 'contents.chapters', 'topics', 'joins.user:id,name,avatar', 'memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'type:id,name,label_contents,label_chapters'])->findOrFail($request->input('material_id'))
         ], 201);
     }
 

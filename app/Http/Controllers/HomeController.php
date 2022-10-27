@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Material;
+use App\Models\Flash;
 use App\Models\Join;
 use Auth;
 
@@ -23,11 +24,19 @@ class HomeController extends Controller
             $material_ids[] = $m['material_id'];
         }
 
-        $materials = Material::with(['joins.topic'])->whereIn('id', $material_ids)->get();
+        $materials = Material::with(['joins.topic', 'type:id,name'])->whereIn('id', $material_ids)->get();
+
+        $flashes = Flash::join('materials', 'flashes.material_id', '=', 'materials.id')
+        ->join('topics', 'flashes.topic_id', '=', 'topics.id')
+        ->select(['flashes.id', 'flashes.front_title', 'materials.id', 'materials.thumbnail', 'topics.name'])
+        ->where('flashes.user_id', Auth::id())
+        ->orderByDesc('flashes.created_at')
+        ->get();
 
         return response()->json([
             'joins' => $joins,
-            'materials' => $materials
+            'materials' => $materials,
+            'flashes' => $flashes
         ], 200);
     }
 

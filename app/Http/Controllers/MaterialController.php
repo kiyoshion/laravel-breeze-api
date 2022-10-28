@@ -11,6 +11,9 @@ use App\Models\Content;
 use App\Models\Section;
 use Auth;
 
+// require __DIR__ . 'vendor/autoload.php';
+use GuzzleHttp\Client;
+
 class MaterialController extends Controller
 {
     /**
@@ -66,8 +69,7 @@ class MaterialController extends Controller
         $file_name = date('YmdHis') . uniqid() . '.jpg';
         $file_path = 'img/materials/';
 
-        if ($request->file('poster')) {
-
+        if ($request->poster) {
             $poster = \Image::make($request->file('poster')->getRealPath())->fit(360, 480);
 
             Storage::disk('public')->put($file_path . $file_name, (string) $poster->encode('jpg', 80));
@@ -167,25 +169,19 @@ class MaterialController extends Controller
 
     public function scrap(Request $request)
     {
-        // $url = "https://www.google.com/search?q=" . $request->input('query') . "&tbm=isch";
-        // $dom = new \DOMDocument('1.0', 'UTF-8');
-        // $html = file_get_contents($url);
-        // $html = mb_convert_encoding($html, "HTML-ENTITIES", 'auto');
-        // @$dom->loadHTML($html);
-        // // $xpath = new \DOMXpath($dom);
-        // // $contents = $xpath->query('//img[contains(@src, "jpg")]');
-        // $contents = $dom->getElementsByTagName('img');
+        $client = new Client(['stream' => true]);
+        $response = $client->request('GET', 'https://google.com/search?q=' . $request->input('query') . '&tbm=isch&tbs=isz:l');
+        $html = $response->getBody()->getContents();
+        $document = new \DOMDocument();
+        @$document->loadHTML($html);
+        $xpath = new \DOMXpath($document);
+        $nodes = $xpath->query('//body//img');
 
-        // $resutls = [];
+        $imgs = [];
+        foreach ($nodes as $node) {
+            $imgs[] = $node->getAttribute('src');
+        }
 
-        // foreach($contents as $value) {
-        //     $resutls[] = $value->ownerDocument->saveXML($value);
-        // }
-
-        // return response()->json([
-        //     'contents' => $contents,
-        //     'results' => $resutls
-        // ], 200);
-
+        return $imgs;
     }
 }

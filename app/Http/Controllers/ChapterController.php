@@ -48,30 +48,22 @@ class ChapterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        if (Auth::user() && Join::where('user_id', Auth::id())->exists()) {
-            $topic_id = Join::select(['topic_id'])->where('user_id', Auth::id())->first();
+        if ($request->topic) {
 
-            $memos = Memo::with(['user:id,name,avatar,displayname'])
-            ->where('chapter_id', $id)
-            ->where('topic_id', $topic_id)
-            ->orderByDesc('created_at')
+            $chapter = Chapter::join('memos', 'memos.chapter_id', '=', 'chapters.id')
+            ->where('memos.chapter_id', $id)
+            ->where('memos.topic_id', $request->topic)
+            ->orderByDesc('memos.created_at')
+            ->limit(10)
+            ->join('flashes', 'flashes.chapter_id', '=', 'chapters.id')
+            ->where('flashes.chapter_id', $id)
+            ->where('flashes.topic_id', $request->topic)
+            ->orderByDesc('flashes.created_at')
             ->limit(10)
             ->get();
-
-            $flashes = Flash::with(['user:id,name,avatar,displayname'])
-            ->where('chapter_id', $id)
-            ->where('topic_id', $topic_id)
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
-
-            $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])
-            ->findOrFail($id);
-
-            $chapter['memos'] = $memos;
-            $chapter['flashes'] = $flashes;
+            
         } else {
             $chapter = Chapter::with(['memos.user:id,name,avatar,displayname', 'flashes.user:id,name,avatar,displayname', 'content.material'])->findOrFail($id);
         }

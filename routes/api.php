@@ -50,3 +50,4 @@ Route::apiResources([
 ]);
 
 Route::get('/scrap', [MaterialController::class, 'scrap']);
+Route::get('/users/{name}/words/{id}', [UserController::class, 'showUserWords']);

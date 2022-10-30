@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Flash;
+use App\Models\Material;
 
 class UserController extends Controller
 {
@@ -107,5 +109,24 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function showUserWords(Request $request, $name, $id)
+    {
+        $user = User::select(['id', 'name', 'displayname', 'avatar'])->where('name', '=', $name)->first();
+
+        $flashes = Flash::where('flashes.user_id', '=', $user->id)
+            ->where('flashes.material_id', '=', $id)
+            ->orderByDesc('flashes.created_at')
+            ->limit(10)
+            ->get();
+
+        $material = Material::select(['id', 'title'])->where('id', $id)->first();
+
+        return response()->json([
+            'user' => $user,
+            'flashes' => $flashes,
+            'material' => $material,
+        ], 200);
     }
 }

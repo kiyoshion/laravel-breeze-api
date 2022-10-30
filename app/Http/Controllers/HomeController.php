@@ -28,7 +28,14 @@ class HomeController extends Controller
 
         $flashes = Flash::join('materials', 'flashes.material_id', '=', 'materials.id')
         ->join('topics', 'flashes.topic_id', '=', 'topics.id')
-        ->select(['flashes.id', 'flashes.front_title', 'materials.id', 'materials.thumbnail', 'topics.name'])
+        ->select([
+            'flashes.id as flash_id',
+            'flashes.front_title as flash_front_title',
+            'materials.id as material_id',
+            'materials.title as material_title',
+            'materials.thumbnail as material_thumbnail',
+            'topics.name as topic_name'
+        ])
         ->where('flashes.user_id', Auth::id())
         ->orderByDesc('flashes.created_at')
         ->get();

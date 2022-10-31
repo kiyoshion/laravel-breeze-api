@@ -169,19 +169,39 @@ class MaterialController extends Controller
 
     public function scrap(Request $request)
     {
-        $client = new Client(['stream' => true]);
-        $response = $client->request('GET', 'https://google.com/search?q=' . $request->input('query') . '&tbm=isch&tbs=isz:l');
-        $html = $response->getBody()->getContents();
-        $document = new \DOMDocument();
-        @$document->loadHTML($html);
-        $xpath = new \DOMXpath($document);
-        $nodes = $xpath->query('//body//img');
+        // $client = new Client();
+        // $response = $client->request('GET', $request->url);
+        // $html = $response->getBody()->getContents();
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+        $html = file_get_contents($request->url);
+        $html = mb_convert_encoding($html, "HTML-ENTITIES", 'auto');
+        @$dom->loadHTML($html);
+        $xpath = new \DOMXpath($dom);
+        $nodes = $xpath->query('//*[contains(@class, "section")]');
 
-        $imgs = [];
-        foreach ($nodes as $node) {
-            $imgs[] = $node->getAttribute('src');
+        $contents = [];
+        foreach($nodes as $node) {
+            $contents[] = $node->nodeValue;
         }
 
-        return $imgs;
+        return response()->json([
+            'html' => $html,
+            'contents' => $contents
+        ], 200);
+
+        // $client = new Client(['stream' => true]);
+        // $response = $client->request('GET', 'https://google.com/search?q=' . $request->input('query') . '&tbm=isch&tbs=isz:l');
+        // $html = $response->getBody()->getContents();
+        // $document = new \DOMDocument();
+        // @$document->loadHTML($html);
+        // $xpath = new \DOMXpath($document);
+        // $nodes = $xpath->query('//body//img');
+
+        // $imgs = [];
+        // foreach ($nodes as $node) {
+        //     $imgs[] = $node->getAttribute('src');
+        // }
+
+        // return $imgs;
     }
 }

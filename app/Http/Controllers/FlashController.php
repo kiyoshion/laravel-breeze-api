@@ -61,7 +61,7 @@ class FlashController extends Controller
             $front_image = str_replace(' ', '+', $front_image);
 
             // small
-            $front_image_data_small = \Image::make($request->front_image)->fit(80, 80);
+            $front_image_data_small = \Image::make($request->front_image)->fit(120, 120);
             $bin_front_image_small = base64_encode($front_image_data_small->encode('jpeg'));
             $flash->front_image_small = $bin_front_image_small;
             $flash->save();
@@ -105,9 +105,7 @@ class FlashController extends Controller
             $back_image = str_replace(' ', '+', $back_image);
 
             // small
-            $back_image_data_small = \Image::make(base64_decode($request->back_image));
-            $back_image_data_small->orientate();
-            $back_image_data_small->fit(80, 80);
+            $back_image_data_small = \Image::make($request->back_image)->fit(120, 120);
             $bin_back_image_small = base64_encode($back_image_data_small->encode('jpeg'));
             $flash->back_image_small = $bin_back_image_small;
             $flash->save();

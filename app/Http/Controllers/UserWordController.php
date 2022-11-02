@@ -27,6 +27,7 @@ class UserWordController extends Controller
         $thumbs = [];
 
         foreach ($materials as $i => $material) {
+            $flash_count = Flash::where('material_id', $material->id)->where('user_id', $user->id)->count();
             $flashes = Flash::select('front_image_small', 'back_image_small')->where('material_id', $material->id)->where(function ($query) {
                 $query->whereNotNull('front_image_small')->orWhereNotNull('back_image_small');
             })->orderByDesc('created_at')->limit(3)->get();
@@ -38,6 +39,7 @@ class UserWordController extends Controller
                 }
             }
             $materials[$i]->thumbs = $thumbs;
+            $materials[$i]->total = $flash_count;
             $thumbs = [];
         }
 
@@ -84,7 +86,7 @@ class UserWordController extends Controller
             ->limit(10)
             ->get();
 
-        $material = Material::select(['id', 'title'])->where('id', $id)->first();
+        $material = Material::select(['id', 'title', 'thumbnail'])->where('id', $id)->first();
 
         return response()->json([
             'user' => $user,

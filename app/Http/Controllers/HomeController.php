@@ -40,9 +40,36 @@ class HomeController extends Controller
         ->orderByDesc('flashes.created_at')
         ->get();
 
+        // wordbook
+        $wordbook_materials = Flash::select('materials.id', 'materials.title', 'materials.thumbnail')
+            ->where('flashes.user_id', '=', Auth::id())
+            ->join('materials', 'flashes.material_id', 'materials.id')
+            ->groupBy('materials.id', 'materials.title', 'materials.thumbnail')
+            ->get();
+
+        $thumbs = [];
+
+        foreach ($wordbook_materials as $i => $material) {
+            $flash_count = Flash::where('material_id', $material->id)->where('user_id', Auth::id())->count();
+            $flashes = Flash::select('front_image_small', 'back_image_small')->where('material_id', $material->id)->where(function ($query) {
+                $query->whereNotNull('front_image_small')->orWhereNotNull('back_image_small');
+            })->orderByDesc('created_at')->limit(3)->get();
+            foreach ($flashes as $flash) {
+                if ($flash->front_image_small) {
+                    $thumbs[] = $flash->front_image_small;
+                } elseif ($flash->back_image_small) {
+                    $thumbs[] = $flash->back_image_small;
+                }
+            }
+            $wordbook_materials[$i]->thumbs = $thumbs;
+            $wordbook_materials[$i]->total = $flash_count;
+            $thumbs = [];
+        }
+
         return response()->json([
             'joins' => $joins,
             'materials' => $materials,
+            'wordbook_materials' => $wordbook_materials,
             'flashes' => $flashes
         ], 200);
     }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Topic;
 use App\Models\Join;
 use App\Models\Material;
+use Auth;
 
 class TopicController extends Controller
 {
@@ -53,10 +54,10 @@ class TopicController extends Controller
         $topic->materials()->syncWithoutDetaching($request->input('material_id'));
 
         $join = Join::firstOrCreate([
-            'user_id' => $request->input('user_id'),
+            'user_id' => Auth::id(),
             'material_id' => $request->input('material_id')
         ], [
-            'user_id' => $request->input('user_id'),
+            'user_id' => Auth::id(),
             'material_id' => $request->input('material_id'),
             'topic_id' => $topic->id,
         ]);
